@@ -1,0 +1,28 @@
+#cloud-config
+users:
+  - name: ubuntu
+    ssh_authorized_keys: 
+      - ${ssh_public_key}
+    groups: [adm, cdrom, dip, plugdev, lxd, sudo]
+    lock-passwd: false
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+write_files:
+  - path: /tmp/nodeConfig.yaml
+    permissions: '0644'
+    content: |
+      apiVersion: node.eks.aws/v1alpha1
+      kind: NodeConfig
+      spec:
+        cluster:
+          name: ${eks_cluster_name}
+          region: ${aws_region}
+        hybrid:
+          ssm:
+            activationCode: ${aws_ssm_activation_code}
+            activationId: ${aws_ssm_activation_id}
+runcmd:
+  - ln -s /usr/lib/systemd/system/amazon-ssm-agent.service /usr/lib/systemd/system/snap.amazon-ssm-agent.amazon-ssm-agent.service
+  - /usr/local/bin/nodeadm init -c file:///tmp/nodeConfig.yaml >> /var/log/nodeadm-init.log 2>&1
+  - systemctl daemon-reload
+  - rm -f /tmp/nodeConfig.yaml
