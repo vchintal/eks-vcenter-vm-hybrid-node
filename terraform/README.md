@@ -49,11 +49,12 @@ If you want the to setup Site-to-Site VPN as well with Terraform, run:
 
 ```sh 
 terraform init
-terraform apply -var "customer_gateway_ip_address=XXX.XXX.XXX.XXX" \
-                -var-file=./../packer/default.auto.pkrvars.hcl \
-                -target=module.vpc \
-                -target=module.vpn_gateway \
-                --auto-approve
+terraform apply \
+    -var "customer_gateway_ip_address=XXX.XXX.XXX.XXX" \
+    -var-file=./../packer/default.auto.pkrvars.hcl \
+    -target=module.vpc \
+    -target=module.vpn_gateway \
+    --auto-approve
 ```
 
 In the above command, `XXX.XXX.XXX.XXX` stands for the Public IP address of your
@@ -63,10 +64,11 @@ If you DO NOT want the to setup Site-to-Site VPN with Terraform run:
 
 ```sh 
 terraform init
-terraform apply -var-file=./../packer/default.auto.pkrvars.hcl \
-                -var "enable_s2s_vpn=false" \
-                -target=module.vpc \
-                --auto-approve
+terraform apply \
+    -var-file=./../packer/default.auto.pkrvars.hcl \
+    -var "enable_s2s_vpn=false" \
+    -target=module.vpc \
+    --auto-approve
 ```
 
 ### Connect Remote On-Premise Network to VPC
@@ -75,11 +77,9 @@ Before proceeding with setting up rest of the infrastructure including provision
 EKS, we need to make sure that the On-Premise Network is connected to the VPC
 
 If using Site-to-Site VPN with the Terraform code, where variable `enable_s2s_vpn=true`
-, then after the [VPC]() 
-and the [VPN Gateway](https://us-west-2.console.aws.amazon.com/vpcconsole/home?region=us-west-2#VpnConnections:) 
-has been created follow the instructions like the one shown 
-[here](https://github.com/vchintal/aws-to-pfsense-s2s-vpn) to connect your 
-remote network to the VPC.
+, then after the **VPC** and the **VPN Gateway** has been created follow the 
+instructions like the one shown [here](https://github.com/vchintal/aws-to-pfsense-s2s-vpn) 
+to connect your remote network to the VPC.
 
 If using Direct Connect, the configuration is beyond the scope of the automation
 and you setup the routing correctly between the Remote On-Premise Network and the VPC
@@ -106,7 +106,8 @@ terraform apply -var-file=./../packer/default.auto.pkrvars.hcl \
 
 ## Verify
 
-Once the Terraform run is complete, you can verify the EKS cluster and nodes using
+Once the Terraform run is complete, you can verify the EKS cluster and nodes 
+using the following commands:
 
 ```sh
 # If default values are used for the setup:
