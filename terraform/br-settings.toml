@@ -1,0 +1,41 @@
+[settings.kubernetes]
+cluster-name = "${cluster_name}"
+api-server = "${api_server}"
+cluster-certificate = "${cluster_ca}"
+hostname-override = "${hostname}"
+provider-id = "eks-hybrid:///${aws_region}/${cluster_name}/${hostname}"
+authentication-mode = "aws"
+cloud-provider = ""
+
+[settings.network]
+hostname = "${hostname}"
+
+[settings.aws]
+region = "${aws_region}"
+
+[settings.container-runtime]
+concurrent-download-chunk-size=0
+
+[settings.kubernetes.credential-providers.ecr-credential-provider]
+enabled = true
+# (optional - defaults to "12h")
+cache-duration = "30m"
+image-patterns = [
+  # One or more URL paths to match an image prefix. Supports globbing of subdomains.
+  "*.dkr.ecr.*.amazonaws.com",
+]
+
+[settings.kubernetes.node-labels]
+"eks.amazonaws.com/compute-type" = "hybrid"
+"eks.amazonaws.com/hybrid-credential-provider" = "ssm"
+
+[settings.host-containers.admin]
+enabled = true
+user-data = "${admin_container_userdata}"
+
+[settings.bootstrap-containers.eks-hybrid-setup]
+mode = "always"
+user-data = "${bootstrap_container_userdata}"
+
+[settings.host-containers.control]
+enabled = true

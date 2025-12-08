@@ -20,3 +20,11 @@ terraform.rc
 
 #MacOS
 .DS_Store
+
+# Bottlerocket 
+bottlerocket/root.json
+bottlerocket/download
+bottlerocket/bottlerocket-template-spec.json
+
+# Project specific
+eks-hybrid-node-vsphere

@@ -10,7 +10,6 @@ packer {
 
 variable "aws_region" {
   type    = string
-  default = "us-west-2"
 }
 
 variable "credential_provider" {
@@ -39,9 +38,8 @@ variable "iso_checksum" {
   description = "Checksum of the ISO image."
 }
 
-variable "k8s_version" {
+variable "eks_version" {
   type        = string
-  default     = "1.34"
   description = "Kubernetes version to use. Must be 1.30 - 1.34"
 }
 
@@ -90,7 +88,7 @@ variable "vsphere_folder" {
   description = "vSphere folder to store the VM template"
 }
 
-variable "vm_template_name" {
+variable "iso_template_name" {
   type        = string
   description = "vSphere VM template name for Hybrid nodes"
 }
@@ -111,7 +109,7 @@ source "vsphere-iso" "ubuntu24" {
   datastore  = var.vsphere_datastore
   folder     = var.vsphere_folder
 
-  vm_name              = "eks-hybrid-node-ubuntu24-template"
+  vm_name              = var.iso_template_name
   guest_os_type        = "ubuntu64Guest"
   CPUs                 = 4
   RAM                  = 16384
@@ -165,7 +163,7 @@ build {
     script = "./provisioner_ubuntu.sh"
     environment_vars = [
       "nodeadm_link=${local.nodeadm_link}",
-      "k8s_version=${var.k8s_version}",
+      "k8s_version=${var.eks_version}",
       "credential_provider=${var.credential_provider}",
       "aws_region=${var.aws_region}"
     ]

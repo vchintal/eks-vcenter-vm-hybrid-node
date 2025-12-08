@@ -28,12 +28,19 @@ are essential for provisioning EKS Hybrid Node.
   * vCenter server `cluster` name
   * vCenter server `folder` name where the generated VM template would be stored
   * vCenter server `network` name
-- EKS Hybrid Node ISO image is deployed to vCenter as a VM template
-  ([instructions](./../packer/README.md)) using the Packer configuration files 
-  in the `packer` directory. Use the [verification steps](./../packer/README.md#verify) provided.
-- The file [default.auto.pkrvars.hcl](./../packer/default.auto.pkrvars.hcl) is 
+- Either or both:
+  - **Bottlerocket** based EKS Hybrid Node OVA is deployed to vCenter as a VM template
+    ([instructions](./../bottlerocket/README.md)). Use the [verification steps](./../bottlerocket/README.md#verify) provided.
+
+  - **Ubuntu** based EKS Hybrid Node ISO image is deployed to vCenter as a VM template
+  ([instructions](./../ubuntu-iso-packer/README.md)) using the Packer configuration files 
+  in the `ubuntu-iso-packer` directory. Use the [verification steps](./../ubuntu-iso-packer/README.md#verify) provided.
+- The file [hybrid-nodes.env](./../hybrid-nodes.env) is 
 fully populated with values for every listed variable
 
+>[!IMPORTANT]
+>You must read about, understand and update values for the required variables 
+>based on your elections and your deployment environment.
 
 ## Setup Hybrid Network Connectivity
 
@@ -42,30 +49,12 @@ fully populated with values for every listed variable
 At the command prompt, while in the `terraform` folder, run the following command
 to deploy the VPC:
 
-If you want the to setup Site-to-Site VPN as well with Terraform, run:
-
 ```sh 
 terraform init
-terraform apply \
-    -var "customer_gateway_ip_address=XXX.XXX.XXX.XXX" \
-    -var-file=./../packer/default.auto.pkrvars.hcl \
-    -target=module.vpc \
-    -target=module.vpn_gateway \
-    --auto-approve
-```
-
-In the above command, `XXX.XXX.XXX.XXX` stands for the Public IP address of your
-on-premises gateway.
-
-If you DO NOT want the to setup Site-to-Site VPN with Terraform run:
-
-```sh 
-terraform init
-terraform apply \
-    -var-file=./../packer/default.auto.pkrvars.hcl \
-    -var "enable_s2s_vpn=false" \
-    -target=module.vpc \
-    --auto-approve
+terraform apply -var-file=./../hybrid-nodes.env \
+  -target=module.vpc \
+  -target=module.vpn_gateway \
+  --auto-approve
 ```
 
 ### Connect Remote On-Premise Network to VPC
@@ -89,22 +78,8 @@ remote network to the VPC.
 Once the VPC is connected to the Remote On-Premise Network, you can proceed to
 deploy the EKS Cluster and Hybrid Nodes by running the following command:
 
-If you setup Site-to-Site VPN with Terraform then run the following command:
-
 ```sh
-terraform apply \
-     -var "customer_gateway_ip_address=XXX.XXX.XXX.XXX" \
-     -var-file=./../packer/default.auto.pkrvars.hcl \
-     --auto-approve
-```
-
-else 
-
-```sh
-terraform apply \
-    -var-file=./../packer/default.auto.pkrvars.hcl \
-    -var "enable_s2s_vpn=false" \
-    --auto-approve
+terraform apply -var-file=./../hybrid-nodes.env --auto-approve
 ```
 
 ## Verify
@@ -138,13 +113,6 @@ To delete all the resources created by this Terraform configuration, run the
 following command(s) from the `terraform` directory:
 
 ```sh
-# If Site-to-Site VPN is used with Terraform:
-terraform destroy \
-    -var "customer_gateway_ip_address=XXX.XXX.XXX.XXX" \
-    -var-file=./../packer/default.auto.pkrvars.hcl
+terraform destroy -var-file=./../hybrid-nodes.env
 
-# If Site-to-Site VPN is NOT used with Terraform:
-terraform destroy \
-    -var-file=./../packer/default.auto.pkrvars.hcl \
-    -var "enable_s2s_vpn=false"
 ```

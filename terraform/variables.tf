@@ -1,25 +1,21 @@
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
-  default     = "10.0.0.0/16"
 }
 
 variable "eks_cluster_name" {
   description = "Name of EKS cluster"
   type        = string
-  default     = "eks-cluster-1"
 }
 
 variable "aws_region" {
   description = "AWS Region"
   type        = string
-  default     = "us-west-2"
 }
 
 variable "eks_version" {
   type        = string
   description = "EKS cluster version"
-  default     = "1.34"
 }
 
 variable "customer_gateway_ip_address" {
@@ -30,31 +26,26 @@ variable "customer_gateway_ip_address" {
 variable "local_ipv4_network_cidr" {
   description = "This is the on-premise network CIDR to be shared over the VPN"
   type        = string
-  default     = "192.168.1.0/24"
 }
 
 variable "remote_ipv4_network_cidr" {
   description = "This is the AWS network CIDR to be shared over the VPN"
   type        = string
-  default     = "10.0.0.0/16"
 }
 
 variable "remote_node_network_cidr" {
   description = "This is on-premise node network CIDR where the Hybrid nodes will reside"
   type        = string
-  default     = "192.168.1.0/26"
 }
 
 variable "remote_pod_network_cidr" {
   description = "This is the on-premise pod network CIDR for the Hybrid nodes"
   type        = string
-  default     = "192.168.1.64/26"
 }
 
 variable "enable_s2s_vpn" {
   description = "Enable Site-to-Site VPN for the VPC"
   type        = bool
-  default     = "true"
 }
 
 variable "vsphere_server" {
@@ -99,13 +90,23 @@ variable "vsphere_folder" {
   description = "vSphere folder to store the VM template"
 }
 
-variable "vm_template_name" {
+variable "iso_template_name" {
   type        = string
-  description = "vSphere VM template name for Hybrid nodes"
+  description = "ISO based vSphere VM based template name for Hybrid nodes"
+}
+
+variable "bottlerocket_template_name" {
+  type        = string
+  description = "Bottlerocket based vSphere VM based template name for Hybrid nodes"
+}
+
+variable "os_bottlerocket" {
+  type        = bool
+  description = "Use Bottlerocket OS for Hybrid nodes"
+  default     = true
 }
 
 variable "hybrid_node_count" {
   type        = number
   description = "Number of Hybrid nodes to create"
-  default     = 4
 }

@@ -1,14 +1,14 @@
-# EKS Hybrid Node ISO for VMware vCenter
-
-This directory contains Packer configuration files to build a custom ISO image 
-for deploying EKS Hybrid worker nodes on vCenter. The 
+# Ubuntu ISO based EKS Hybrid Node for VMware vCenter
+This folder contains Packer configuration files to build a custom Ubuntu-based 
+ISO image that is deployed as a VM template for creating EKS Hybrid worker nodes
+ on vCenter. 
 
 ## Prerequisites
 - [Packer](https://www.packer.io/downloads) installed on your local machine.
 - [govc](https://github.com/vmware/govmomi/releases) CLI binary installed
 
-- Access to a VMWare vCenter server where you can deploy the generated ISO image. 
-  Following details need to be captured:
+- Access to a VMWare vCenter server where you deploy the generated ISO image as 
+  a VM template. Following information is required:
   * vCenter server `hostname` 
   * vCenter server `username` of the user with sufficient privileges to create 
    VMs and VM Templates 
@@ -23,32 +23,22 @@ for deploying EKS Hybrid worker nodes on vCenter. The
 ### Download the repo and initialize it
 ```sh
 git clone https://github.com/vchintal/eks-vcenter-vm-hybrid-node
-cd eks-vcenter-vm-hybrid-node/packer
+cd eks-vcenter-vm-hybrid-node/ubuntu-iso-packer
 ```
 
 ### Prepare the variables file with values 
 
-Update the file named [`default.auto.pkrvars.hcl`](default.auto.pkrvars.hcl) in 
-the `packer` directory with the following content, providing values using your 
-actual `vCenter` configuration:
+Update the file named [`hybrid-nodes.env`](../hybrid-nodes.env) in 
+the parent directory by:
 
-```
-iso_url            = "https://cofractal-ewr.mm.fcix.net/ubuntu-releases/24.04.3/ubuntu-24.04.3-live-server-amd64.iso"
-iso_checksum       = "c3514bf0056180d09376462a7a1b4f213c1d6e8ea67fae5c25099c6fd3d8274b"
-vsphere_server     = 
-vsphere_user       = 
-vsphere_password   = 
-vsphere_datacenter = 
-vsphere_cluster    = 
-vsphere_datastore  = 
-vsphere_folder     = "Linux Templates"
-vsphere_network    = 
-vm_template_name   = "eks-hybrid-node-ubuntu24-template"
-```
+1. Providing values for Ubuntu ISO url and checksum. For Ubuntu ISO url, 
+   refer to the many [mirrors](https://launchpad.net/ubuntu/+archivemirrors) 
+   closest to your region. Also, if you are choosing any other version of the ISO than what is provided to you, update the corresponding `iso_checksum` 
+   for the chosen file.
+2. Providing updated values reflecting your actual `vCenter` configuration.
 
-For Ubuntu ISO url, refer to the many [mirrors](https://launchpad.net/ubuntu/+archivemirrors) 
-closest to your region. Also, if you are choosing any other version of the ISO, 
-update the `iso_checksum` value as well with the corresponding checksum for the file.
+The rest of the variables beyond `Packer` and `vCenter` settings are **NOT** 
+mandatory for this exercise and can be left empty.
 
 ## Deploy
 To build the ISO image and deploy it to your vCenter server as a VM template, run 
@@ -60,6 +50,13 @@ packer validate -var-file=default.auto.pkrvars.hcl hybrid-nodes-template.pkr.hcl
 
 packer build .
 ```
+
+> [!NOTE]
+> - The file `default.auto.pkrvars.hcl` is a symbolic link to `hybrid-nodes.env`
+> file 
+> - Since the file has other variables as well, when `packer validate` runs, it 
+> might issue warnings that those variables do not exist. These can be safely 
+> ignored.
 
 ## Verify 
 After the build process completes, log in to your vCenter server and verify 

@@ -48,6 +48,6 @@ This comprehensive solution provides a end-to-end automation for deploying EKS H
 
 To successfully deploy this solution in your environment, follow the steps listed in sequence:
 
-1. **[EKS Hybrid Node ISO Creation](packer/README.md)** - Build a customized, hardened virtual machine image optimized for EKS Hybrid Node operations using HashiCorp Packer. This step creates a golden image with all necessary Kubernetes components, security configurations, and VMware tools pre-installed.
-
-2. **[AWS Cloud Infrastructure Setup](terraform/README.md)** - Provision the required AWS infrastructure components including EKS cluster, networking, security groups, and optional Site-to-Site VPN connectivity using Terraform. This step establishes the cloud foundation and secure connectivity between your on-premises VMware environment and AWS.
+1. **[Bottlerocket based EKS Hybrid Node](bottlerocket/README.md)** - Use the official all-in-one Bottlerocket OVA with all necessary Kubernetes components, security configurations, and VMware tools pre-installed for EKS Hybrid Nodes.
+2. **[Ubuntu based EKS Hybrid Node](packer/README.md)** - Build a customized, hardened virtual machine image optimized for EKS Hybrid Node operations using HashiCorp Packer. This step creates a golden image with all necessary Kubernetes components, security configurations, and VMware tools pre-installed. 
+3. **[AWS Cloud Infrastructure Setup](terraform/README.md)** - Provision the required AWS infrastructure components including EKS cluster, networking, security groups, and optional Site-to-Site VPN connectivity using Terraform. This step establishes the cloud foundation and secure connectivity between your on-premises VMware environment and AWS.
